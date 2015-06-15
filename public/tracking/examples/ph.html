@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>tracking.js - color hello world</title>
+  <link rel="stylesheet" href="assets/demo.css">
+
+  <script src="../build/tracking-min.js"></script>
+  <script src='../color/one-color-all.js'></script>
+</head>
+<body>
+  <div id="colors" style="width:600px;height:200px">xxx  </div>
+
+      <img id="img" src="assets/ph.jpg" />
+
+  <script>
+    window.onload = function() {
+      var img = document.getElementById('img');
+      var demoContainer = document.querySelector('.demo-container');
+      var low = 50;
+      tracking.ColorTracker.registerColor('ph_x'  , function(r, g, b) {if (r < 96 && g > 113 && b < 73) {return true;}return false;});
+      tracking.ColorTracker.registerColor('red'  , function(r, g, b) {if (r < 200 && g > low && b < low) {return true;}return false;});
+      tracking.ColorTracker.registerColor('green', function(r, g, b) {if (r > low && g < 200 && b < low) {return true;}return false;});
+      tracking.ColorTracker.registerColor('blue' , function(r, g, b) {if (r > low && g > low && b < 200) {return true;}return false;});
+      var tracker = new tracking.ColorTracker(['magenta', 'yellow','red','blue','ph_x']);
+
+      tracker.on('track', function(event) {
+        event.data.forEach(function(rect) {
+          window.plot(rect.x, rect.y, rect.width, rect.height, rect.color);
+        });
+      });
+
+      tracking.track('#img', tracker);
+
+      window.plot = function(x, y, w, h, color) {
+        var rect = document.createElement('div');
+        document.querySelector('.demo-container').appendChild(rect);
+        rect.classList.add('rect');
+        rect.style.border = '2px solid ' + color;
+        rect.style.width = w + 'px';
+        rect.style.height = h + 'px';
+        rect.style.left = (img.offsetLeft + x) + 'px';
+        rect.style.top = (img.offsetTop + y) + 'px';
+      };
+    };
+  </script>
+
+</body>
+</html>
