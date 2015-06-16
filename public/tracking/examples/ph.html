@@ -5,24 +5,145 @@
   <title>tracking.js - color hello world</title>
   <link rel="stylesheet" href="assets/demo.css">
 
-  <script src="../build/tracking-min.js"></script>
-  <script src='../color/one-color-all.js'></script>
+  <script src="/bower_components/tracking.js/build/tracking-min.js"></script>
+  <script src='/bower_components/color/one-color-all.js'></script>
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css">
+
+  <script src='/bower_components/jquery/dist/jquery.min.js'></script>
+  <script src='//code.jquery.com/ui/1.11.4/jquery-ui.js'></script>
+  <style>
+  .rect {
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    left: -1000px;
+    top: -1000px;
+  }
+  </style>
+
+<script type="text/javascript">
+// #bf4040
+// #bf8c40
+// #a6bf40
+// #59bf40
+// #40bf73
+// #40bfbf
+// #4073bf
+// #5940bf
+// #a640bf
+// #bf408c
+// #bf4040
+	$(document).ready(function(){
+		var unitSize = 16; // width (and height) of one square
+		
+		var unitsTall = 200; // number of squares along y-axis
+		var numColors = 10;
+		var hueStep = 1/numColors;
+		var unitsWide = 400/numColors; // number of squares along x-axis
+
+
+		for (var hue=0;hue<1;hue+=hueStep){
+			var myColor = one.color('hsl(' + hue*360 + ',' + 100 + ',' + 50 + ')');
+			console.log(myColor.hex())
+			$('<span class="square"></span>').css({
+		        display: 'block',
+		        float: 'left',
+		        width: unitsWide,
+		        height: unitsTall,
+		        'background-color': myColor.css()
+		    }).appendTo(colors);
+		}
+		//$('#colors').css('background-color',myColor.css());
+
+	});
+
+</script>
+
 </head>
 <body>
-  <div id="colors" style="width:600px;height:200px">xxx  </div>
-
-      <img id="img" src="assets/ph.jpg" />
-
+	<div id="colors" style="width:600px;height:200px"></div>
+   	<div class="demo-container">
+    		<img id="img" src="assets/ph2.jpg" />
+    </div>
   <script>
     window.onload = function() {
       var img = document.getElementById('img');
       var demoContainer = document.querySelector('.demo-container');
       var low = 50;
-      tracking.ColorTracker.registerColor('ph_x'  , function(r, g, b) {if (r < 96 && g > 113 && b < 73) {return true;}return false;});
-      tracking.ColorTracker.registerColor('red'  , function(r, g, b) {if (r < 200 && g > low && b < low) {return true;}return false;});
+      var delta = 0.00001;
+      tracking.ColorTracker.registerColor('657350'  , 
+      	function(r, g, b) {
+      		//console.log(r);
+//      		if (one.color('#657350').hex() === one.color('rgb('+r+', '+g+', '+b+')'), 1e-2)) {
+//      		if (r < 200 && g > low && b < low) {
+			var cor1 = one.color('#657350').hue();
+			var cor2 = one.color('rgb('+r+', '+g+', '+b+')').hue();
+			//console.log(cor1.css() + " "+cor2.css()); 
+//      		if (cor1.equals(cor2, 0.1)) {
+      		if (cor2 > (cor1 - 0.01) && cor2 < (cor1 + 0.01)) {
+      			//console.log("t"+r+' '+g+' '+b);
+      			//console.log("t");
+      			return true;
+      		}
+      		//console.log("n");
+      		return false;
+      	});
+        tracking.ColorTracker.registerColor('33ff00'  , 
+      		function(r, g, b) {	var cor1 = one.color('#33ff00').hue();var cor2 = one.color('rgb('+r+','+g+','+b+')').hue();
+      		if (cor2 > (cor1 - 0.01) && cor2 < (cor1 + 0.01)) {	return true;}return false;});
+        tracking.ColorTracker.registerColor('ff9900'  , 
+      		function(r, g, b) {	var cor1 = one.color('#ff9900').hue();var cor2 = one.color('rgb('+r+','+g+','+b+')').hue();	if (cor2 > (cor1 - delta) && cor2 < (cor1 + delta)) {	return true;}return false;});
+      	tracking.ColorTracker.registerColor('ccff00'  , 
+      		function(r, g, b) {	var cor1 = one.color('#ccff00').hue();var cor2 = one.color('rgb('+r+','+g+','+b+')').hue();	if (cor2 > (cor1 - delta) && cor2 < (cor1 + delta)) {	return true;}return false;});
+      	tracking.ColorTracker.registerColor('ccff00'  , 
+      		function(r, g, b) {	var cor1 = one.color('#ccff00').hue();var cor2 = one.color('rgb('+r+','+g+','+b+')').hue();	if (cor2 > (cor1 - delta) && cor2 < (cor1 + delta)) {	return true;}return false;});
+      	tracking.ColorTracker.registerColor('ccff00'  , 
+      		function(r, g, b) {	var cor1 = one.color('#ccff00').hue();var cor2 = one.color('rgb('+r+','+g+','+b+')').hue();	if (cor2 > (cor1 - delta) && cor2 < (cor1 + delta)) {	return true;}return false;});
+      	tracking.ColorTracker.registerColor('ccff00'  , 
+      		function(r, g, b) {	var cor1 = one.color('#ccff00').hue();var cor2 = one.color('rgb('+r+','+g+','+b+')').hue();	if (cor2 > (cor1 - delta) && cor2 < (cor1 + delta)) {	return true;}return false;});
+      	tracking.ColorTracker.registerColor('0066ff'  , 
+      		function(r, g, b) {	var cor1 = one.color('#0066ff').hue();var cor2 = one.color('rgb('+r+','+g+','+b+')').hue();	if (cor2 > (cor1 - delta) && cor2 < (cor1 + delta)) {	return true;}return false;});
+      	tracking.ColorTracker.registerColor('3300ff'  , 
+      		function(r, g, b) {	var cor1 = one.color('#3300ff').hue();var cor2 = one.color('rgb('+r+','+g+','+b+')').hue();	if (cor2 > (cor1 - delta) && cor2 < (cor1 + delta)) {	return true;}return false;});
+      	tracking.ColorTracker.registerColor('cc00ff'  , 
+      		function(r, g, b) {	var cor1 = one.color('#cc00ff').hue();var cor2 = one.color('rgb('+r+','+g+','+b+')').hue();	if (cor2 > (cor1 - delta) && cor2 < (cor1 + delta)) {	return true;}return false;});
+      	tracking.ColorTracker.registerColor('ff0099'  , 
+      		function(r, g, b) {	var cor1 = one.color('#ff0099').hue();var cor2 = one.color('rgb('+r+','+g+','+b+')').hue();	if (cor2 > (cor1 - delta) && cor2 < (cor1 + delta)) {	return true;}return false;});
+
+// #bf4040
+// #bf8c40
+// #a6bf40
+// #59bf40
+// #40bf73
+// #40bfbf
+// #4073bf
+// #5940bf
+// #a640bf
+// #bf408c
+// #bf4040
+      tracking.ColorTracker.registerColor('223329', function(r, g, b) {	if (one.color('#223329').equals(one.color('rgb('+r+','+g+','+b+')'), 0.1)) {return true;}return false;});
+      tracking.ColorTracker.registerColor('ae5416', function(r, g, b) {	if (one.color('#ae5416').equals(one.color('rgb('+r+','+g+','+b+')'), 0.1)) {return true;}return false;});
+      tracking.ColorTracker.registerColor('b4a03f', function(r, g, b) {	if (one.color('#b4a03f').equals(one.color('rgb('+r+','+g+','+b+')'), 0.1)) {return true;}return false;});
+      tracking.ColorTracker.registerColor('a6bf40', function(r, g, b) {	if (one.color('#a6bf40').equals(one.color('rgb('+r+','+g+','+b+')'), 0.1)) {return true;}return false;});
+      tracking.ColorTracker.registerColor('59bf40', function(r, g, b) {	if (one.color('#59bf40').equals(one.color('rgb('+r+','+g+','+b+')'), 0.1)) {return true;}return false;});
+      tracking.ColorTracker.registerColor('514e23', function(r, g, b) {	if (one.color('#514e23').equals(one.color('rgb('+r+','+g+','+b+')'), 0.1)) {return true;}return false;});
+      tracking.ColorTracker.registerColor('5940bf', function(r, g, b) {	if (one.color('#5940bf').equals(one.color('rgb('+r+','+g+','+b+')'), 0.1)) {return true;}return false;});
+      tracking.ColorTracker.registerColor('4073bf', function(r, g, b) {	if (one.color('#4073bf').equals(one.color('rgb('+r+','+g+','+b+')'), 0.1)) {return true;}return false;});
+      tracking.ColorTracker.registerColor('a640bf', function(r, g, b) {	if (one.color('#a640bf').equals(one.color('rgb('+r+','+g+','+b+')'), 0.1)) {return true;}return false;});
+      tracking.ColorTracker.registerColor('bf408c', function(r, g, b) {	if (one.color('#bf408c').equals(one.color('rgb('+r+','+g+','+b+')'), 0.1)) {return true;}return false;});
+      tracking.ColorTracker.registerColor('bf4040', function(r, g, b) {	if (one.color('#bf4040').equals(one.color('rgb('+r+','+g+','+b+')'), 0.1)) {return true;}return false;});
+      tracking.ColorTracker.registerColor('red'  , 
+      	function(r, g, b) {
+      		if (r < 200 && g > low && b < low) {
+      			//console.log("r "+r+' '+g+' '+b);
+      			return true;
+      		}
+      		return false;
+      	});
       tracking.ColorTracker.registerColor('green', function(r, g, b) {if (r > low && g < 200 && b < low) {return true;}return false;});
       tracking.ColorTracker.registerColor('blue' , function(r, g, b) {if (r > low && g > low && b < 200) {return true;}return false;});
-      var tracker = new tracking.ColorTracker(['magenta', 'yellow','red','blue','ph_x']);
+      var tracker = new tracking.ColorTracker(['223329','ae5416','b4a03f','514e23']);
+//      var tracker = new tracking.ColorTracker(['657350','33ff00','ff9900','ccff00','ff0099','0066ff','3300ff','cc00ff','ff0099']);
 
       tracker.on('track', function(event) {
         event.data.forEach(function(rect) {
@@ -36,11 +157,14 @@
         var rect = document.createElement('div');
         document.querySelector('.demo-container').appendChild(rect);
         rect.classList.add('rect');
-        rect.style.border = '2px solid ' + color;
+        //console.log(color);
+        rect.style.border = '2px solid #' + color;
+        //rect.style.border = '2px solid red' ;
         rect.style.width = w + 'px';
         rect.style.height = h + 'px';
         rect.style.left = (img.offsetLeft + x) + 'px';
         rect.style.top = (img.offsetTop + y) + 'px';
+
       };
     };
   </script>
