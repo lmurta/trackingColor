@@ -131,9 +131,18 @@
             $('<span class="square"></span>').css({
                 display: 'block',
                 float: 'left',
-                width: unitsWide,
+                width: unitsWide/2,
                 height: unitsTall,
                 'background-color': myColor.css()
+            }).appendTo(colors);
+
+            var myColor2 = one.color('hsv('+360 * myColor.hue()+','+75+','+100+')')
+            $('<span class="square"></span>').css({
+                display: 'block',
+                float: 'left',
+                width: unitsWide/2,
+                height: unitsTall,
+                'background-color': myColor2.css()
             }).appendTo(colors);
             //console.log(myColor.css());
           }
