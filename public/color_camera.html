@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>tracking.js - color with camera</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="tracking/build/tracking-min.js"></script>
+  <script src="../dat-gui/build/dat.gui.min.js"></script>
+  <script src="tracking/assets/stats.min.js"></script>
+  <script src="tracking/assets/color_camera_gui.js"></script>
+  <script src="/bower_components/color-thief/src/color-thief.js"></script>
+  <script src="jquery/dist/jquery.js"></script>
+  <script src="jquery-ui/jquery-ui.js"></script>
+  <script src='/bower_components/color/one-color-all.js'></script>
+
+
+  <style>
+  video, canvas {
+    margin-left: 200px;
+    margin-top: 35px;
+    position: absolute;
+  }
+    .nImage {
+    margin-left: 200px;
+    margin-top: 500px;
+    position: absolute;
+    background-color: #c0c0c0;
+  }
+    .colors {
+    margin-left: 5px;
+    margin-top: 35px;
+    position: absolute;
+    background-color: #c0c0c0;
+  }
+  </style>
+</head>
+<body>
+  <div class="colors" id="colors" style="width:150px;height:450px"></div>
+
+  <div>
+      <video id="video" width="600" height="450" preload autoplay loop muted controls></video>
+      <canvas id="canvas" width="600" height="450"></canvas>
+  </div>
+  <div>
+    <button id="start">Start</button>
+  </div>
+  <div>
+    <img class="nImage" id="divImage" width="600" height="450"></img>
+  </div>
+  <script>
+    $( document ).ready(function() {
+      var video = document.getElementById('video');
+      var canvas = document.getElementById('canvas');
+      var context = canvas.getContext('2d');
+
+      var numAreas =4;
+
+      var unitSize = 16; // width (and height) of one square
+      var unitsTall = 10; // number of squares along y-axis
+      var unitsWide = 150/numAreas; // number of squares along x-axis
+
+      var ax=120; ay=200; aw=40;ah=40;dx=125;dy=0;
+      var areas = new Array(numAreas);
+      for (var i=0; i<numAreas; i++){
+        areas[i] = new Array(4);
+        areas[i]=[ax,ay,aw,ah];
+        //console.log(areas[i]);
+        ax = ax + dx;
+
+      }
+      function drawAreas(){
+          context.strokeStyle = "#000000";
+          for (var i=0;i<numAreas;i++){
+            context.strokeRect(areas[i][0], areas[i][1], areas[i][2], areas[i][3]);
+            context.font = '11px Helvetica';
+            context.fillStyle = "#fff";
+            context.fillText('i: ' + i , areas[i][0], areas[i][1]);
+          }
+      }
+      
+      var divImage = document.getElementById('divImage');
+      var colorThief = new ColorThief();
+      var newImage = new Image();
+
+      $( "#start").click( function(){
+        console.log("Start");
+        context.drawImage( video, 0, 0, canvas.width, canvas.height);
+        newImage.src = canvas.toDataURL("image/png");  
+        var dataURL = canvas.toDataURL();
+        //image.src = canvas.toDataURL();  
+        //document.body.appendChild(image);
+        //$( "#newImage").setAttribute('src',dataURL);
+        divImage.setAttribute('src',dataURL);
+        //$("#image").src= image.src; 
+
+      });
+      
+      divImage.onload = function() {
+          var colorThief = new ColorThief();
+          var dominantColor = colorThief.getColor(divImage);
+          console.log("full:"+dominantColor);
+/*          var palette =       colorThief.getPalette(divImage, 8);
+          var arrayLength = palette.length;
+          for (var i = 0; i < arrayLength; i++) {
+            //console.log(palette[i]);
+
+            var myColor = one.color('rgb('+palette[i][0]+','+palette[i][1]+','+palette[i][2]+')');
+            $('<span class="square"></span>').css({
+                display: 'block',
+                float: 'left',
+                width: unitsWide,
+                height: unitsTall,
+                'background-color': myColor.css()
+            }).appendTo(colors);  
+             
+          }
+*/
+
+          for (var i=0;i<numAreas;i++){
+            var area = {
+              'startx': areas[i][0],
+              'starty': areas[i][1],
+              'width':  areas[i][2],
+              'height': areas[i][3]
+            };
+            console.log("passing: "+area.startx);
+
+            var dominantColor = colorThief.getColor(divImage,8,area);
+            //console.log("area :"+i+" "+dominantColor);
+            var myColor = one.color('rgb('+dominantColor[0]+','+dominantColor[1]+','+dominantColor[2]+')');
+            $('<span class="square"></span>').css({
+                display: 'block',
+                float: 'left',
+                width: unitsWide,
+                height: unitsTall,
+                'background-color': myColor.css()
+            }).appendTo(colors);
+            //console.log(myColor.css());
+          }
+
+      }
+
+
+      var delta = 30;
+      tracking.ColorTracker.registerColor('223329', function(r, g, b) { 
+        //if (one.color('#223329').equals(one.color('rgb('+r+','+g+','+b+')'), 0.1)) {
+        if ((r < (34+delta)) && (r > (34-delta)) &&
+            (g < (51+delta)) && (g > (51-delta)) &&
+            (b < (41+delta)) && (b > (41-delta)))
+            {//34,51,41
+          return true;}return false;});
+
+      var tracker = new tracking.ColorTracker(['223329']);
+
+      tracking.track('#video', tracker, { camera: true });
+
+      tracker.on('track', function(event) {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        event.data.forEach(function(rect) {
+          if (rect.color === 'custom') {
+            rect.color = tracker.customColor;
+          }
+
+          context.strokeStyle = rect.color;
+          context.strokeRect(rect.x, rect.y, rect.width, rect.height);
+          context.font = '11px Helvetica';
+          context.fillStyle = "#fff";
+          context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
+          context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
+        });
+        drawAreas();
+
+      });
+
+     //initGUIControllers(tracker);
+    });
+  </script>
+</body>
+</html>
