@@ -12,46 +12,83 @@
   <script src="jquery/dist/jquery.js"></script>
   <script src="jquery-ui/jquery-ui.js"></script>
   <script src='/bower_components/color/one-color-all.js'></script>
-
+  <script src='/bower_components/flot/jquery.flot.js'></script>
+  <script src='/bower_components/flot/jquery.flot.time.js'></script>
 
   <style>
-  video, canvas {
+  .trackingvideo, .trackingcanvas {
+    position: absolute;
     margin-left: 200px;
     margin-top: 35px;
-    position: absolute;
   }
-    .nImage {
-    margin-left: 200px;
-    margin-top: 500px;
+      .colors {
     position: absolute;
-    background-color: #c0c0c0;
-  }
-    .colors {
     margin-left: 5px;
     margin-top: 35px;
-    position: absolute;
-    background-color: #c0c0c0;
+    width:150px;
+    height:450px;
+    background-color: #ddd;
   }
+      .nImage {
+    margin-left: 200px;
+    margin-top: 1000px;
+    position: absolute;
+    background-color: #cccccc;
+  }
+
+  .flot-container {
+    box-sizing: border-box;
+    position: absolute;
+    margin-left: 200px;
+    margin-top: 500px;
+    width: 600px;
+    height: 450px;
+
+    padding: 20px 15px 15px 15px;
+    xxmargin: 15px auto 30px auto;
+    border: 1px solid #ddd;
+    background: #fff;
+    background: linear-gradient(#f6f6f6 0, #fff 50px);
+    background: -o-linear-gradient(#f6f6f6 0, #fff 50px);
+    background: -ms-linear-gradient(#f6f6f6 0, #fff 50px);
+    background: -moz-linear-gradient(#f6f6f6 0, #fff 50px);
+    background: -webkit-linear-gradient(#f6f6f6 0, #fff 50px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    -o-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    -ms-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    -moz-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    -webkit-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.flot-placeholder {
+  width: 100%;
+  height: 100%;
+  font-size: 14px;
+  line-height: 1.2em;
+}
   </style>
 </head>
 <body>
-  <div class="colors" id="colors" style="width:150px;height:450px"></div>
-
-  <div>
-      <video id="video" width="600" height="450" preload autoplay loop muted controls></video>
-      <canvas id="canvas" width="600" height="450"></canvas>
-  </div>
   <div>
     <button id="start">Start</button>
+  </div>
+  <div class="colors" id="colors"></div>
+  <div>
+      <video  class="trackingvideo" id="trackingvideo" width="600" height="450" preload autoplay loop muted controls></video>
+      <canvas class="trackingcanvas" id="trackingcanvas" width="600" height="450"></canvas>
+  </div>
+
+  <div class="flot-container">
+    <div class="flot-placeholder" id="flot1"></div>
   </div>
   <div>
     <img class="nImage" id="divImage" width="600" height="450"></img>
   </div>
   <script>
     $( document ).ready(function() {
-      var video = document.getElementById('video');
-      var canvas = document.getElementById('canvas');
-      var context = canvas.getContext('2d');
+      var video = document.getElementById('trackingvideo');
+      var trkcanvas = document.getElementById('trackingcanvas');
+      var context = trkcanvas.getContext('2d');
 
       var numAreas =4;
 
@@ -68,6 +105,21 @@
         ax = ax + dx;
 
       }
+
+      var now;
+      var totalPoints = 100;
+      var dataToPlot=new Array(1);
+      var dataToPlotLabel =new Array(1);
+      for (var j=0;j<8;j++){
+        dataToPlot[j] = new Array();
+        dataToPlotLabel[j]="";
+      }
+      var incomingData;
+      incomingData=[
+              { data: dataToPlot[0], label:dataToPlotLabel[0]},
+            ];
+      
+      //plot.draw();
       function drawAreas(){
           context.strokeStyle = "#000000";
           for (var i=0;i<numAreas;i++){
@@ -84,37 +136,25 @@
 
       $( "#start").click( function(){
         console.log("Start");
-        context.drawImage( video, 0, 0, canvas.width, canvas.height);
-        newImage.src = canvas.toDataURL("image/png");  
-        var dataURL = canvas.toDataURL();
-        //image.src = canvas.toDataURL();  
-        //document.body.appendChild(image);
-        //$( "#newImage").setAttribute('src',dataURL);
+        context.drawImage( video, 0, 0, trkcanvas.width, trkcanvas.height);
+        newImage.src = trkcanvas.toDataURL("image/png");  
+        var dataURL = trkcanvas.toDataURL();
         divImage.setAttribute('src',dataURL);
-        //$("#image").src= image.src; 
-
       });
-      
+      var refreshColors = setInterval( function()  {
+
+        context.drawImage( video, 0, 0, trkcanvas.width, trkcanvas.height);
+        newImage.src = trkcanvas.toDataURL("image/png");  
+        var dataURL = trkcanvas.toDataURL();
+        divImage.setAttribute('src',dataURL);
+
+      }, 5000);
+
       divImage.onload = function() {
           var colorThief = new ColorThief();
           var dominantColor = colorThief.getColor(divImage);
           console.log("full:"+dominantColor);
-/*          var palette =       colorThief.getPalette(divImage, 8);
-          var arrayLength = palette.length;
-          for (var i = 0; i < arrayLength; i++) {
-            //console.log(palette[i]);
 
-            var myColor = one.color('rgb('+palette[i][0]+','+palette[i][1]+','+palette[i][2]+')');
-            $('<span class="square"></span>').css({
-                display: 'block',
-                float: 'left',
-                width: unitsWide,
-                height: unitsTall,
-                'background-color': myColor.css()
-            }).appendTo(colors);  
-             
-          }
-*/
 
           for (var i=0;i<numAreas;i++){
             var area = {
@@ -145,8 +185,71 @@
                 'background-color': myColor2.css()
             }).appendTo(colors);
             //console.log(myColor.css());
+            dataToPlot[i].push([now,myColor.hue()]);
+            dataToPlotLabel[i] = "A:"+ i;
           }
+          var gradiente=0;
+          var gradienteNum = 20;
+          var gradienteStep =gradienteNum / gradienteNum;
+          var gAngle = 360/gradienteNum;
+          var gSat = 75;
+          var gLigth =80;
+          now = ((new Date()).getTime());
 
+          incomingData=[
+              { data: dataToPlot[0], label:dataToPlotLabel[0]},
+              { data: dataToPlot[1], label:dataToPlotLabel[1]},
+              { data: dataToPlot[2], label:dataToPlotLabel[2]},
+              { data: dataToPlot[3], label:dataToPlotLabel[3]},
+          ];
+          plot = $.plot("#flot1", incomingData , {
+            series: {
+              lines: {
+                lineWidth: 2,
+                shadowSize: 0,
+              },
+              shadowSize: 0, // Drawing is faster without shadows
+            },
+            colors: ["#000","#333", "#666", "#999", "#ccc", "#cb4b4b", "#aaaaff", "#ff6666"],
+            xaxes: [{  
+                      mode: "time",
+                      timeformat: "%H:%M:%S",
+                      timezone: "browser",
+                      show: true,
+                      //rotateTicks: 135,
+            }],
+            yaxes: [  { position: "left" , min: 0, max: 1 }, 
+                      { position: "right", min: 0, max: 14,
+                       ticks:[3,4,5,6,7] 
+                     } 
+                  ],
+            grid: {
+              markings: [
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+              ]
+            }
+          });
+          plot.draw();
       }
 
 
@@ -161,10 +264,10 @@
 
       var tracker = new tracking.ColorTracker(['223329']);
 
-      tracking.track('#video', tracker, { camera: true });
+      tracking.track('#trackingvideo', tracker, { camera: true });
 
       tracker.on('track', function(event) {
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.clearRect(0, 0, trkcanvas.width, trkcanvas.height);
 
         event.data.forEach(function(rect) {
           if (rect.color === 'custom') {
@@ -182,7 +285,6 @@
 
       });
 
-     //initGUIControllers(tracker);
     });
   </script>
 </body>
