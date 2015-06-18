@@ -14,7 +14,7 @@
   <script src='/bower_components/color/one-color-all.js'></script>
   <script src='/bower_components/flot/jquery.flot.js'></script>
   <script src='/bower_components/flot/jquery.flot.time.js'></script>
-
+  <script src='/bower_components/flot/jquery.flot.symbol.js'></script>
   <style>
   .trackingvideo, .trackingcanvas {
     position: absolute;
@@ -86,11 +86,12 @@
   </div>
   <script>
     $( document ).ready(function() {
+      var smoothTiny = 1-(1/10);
       var video = document.getElementById('trackingvideo');
       var trkcanvas = document.getElementById('trackingcanvas');
       var context = trkcanvas.getContext('2d');
 
-      var numAreas =4;
+      var numAreas =1;
 
       var unitSize = 16; // width (and height) of one square
       var unitsTall = 10; // number of squares along y-axis
@@ -152,9 +153,9 @@
 
       divImage.onload = function() {
           var colorThief = new ColorThief();
-          var dominantColor = colorThief.getColor(divImage);
-          console.log("full:"+dominantColor);
-
+          //var dominantColor = colorThief.getColor(divImage);
+          //console.log("full:"+dominantColor);
+          now = ((new Date()).getTime());
 
           for (var i=0;i<numAreas;i++){
             var area = {
@@ -163,7 +164,7 @@
               'width':  areas[i][2],
               'height': areas[i][3]
             };
-            console.log("passing: "+area.startx);
+            //console.log("passing: "+area.startx);
 
             var dominantColor = colorThief.getColor(divImage,8,area);
             //console.log("area :"+i+" "+dominantColor);
@@ -185,7 +186,24 @@
                 'background-color': myColor2.css()
             }).appendTo(colors);
             //console.log(myColor.css());
-            dataToPlot[i].push([now,myColor.hue()]);
+
+            //http://stackoverflow.com/questions/3760506/smoothing-values-over-time-moving-average-or-something-better
+            //a(i+1) = tiny*data(i+1) + (1.0-tiny)*a(i)
+            var newData = myColor.hue();
+            var length = dataToPlot[i].length;
+            //console.log("length:"+length);
+            if (length <= 0){
+              dataToPlot[i].push([now, myColor.hue() ]);
+            }else{
+              //console.log("d:"+ dataToPlot[i][length -1]);
+              var lastA = dataToPlot[i][length -1];
+              //console.log("lastA:"+ lastA[1]);
+              var nextA = smoothTiny * newData + (1.0 - smoothTiny) * lastA[1];
+              //console.log ("lastA:"+ lastA +" newData:"+ newData +" nextA:"+nextA);
+              dataToPlot[i].push([now, nextA ]);
+              //dataToPlot[i].push([now, myColor.hue() ]);
+
+            }
             dataToPlotLabel[i] = "A:"+ i;
           }
           var gradiente=0;
@@ -193,24 +211,30 @@
           var gradienteStep =gradienteNum / gradienteNum;
           var gAngle = 360/gradienteNum;
           var gSat = 75;
-          var gLigth =80;
-          now = ((new Date()).getTime());
+          var gLigth =50;
 
           incomingData=[
-              { data: dataToPlot[0], label:dataToPlotLabel[0]},
-              { data: dataToPlot[1], label:dataToPlotLabel[1]},
-              { data: dataToPlot[2], label:dataToPlotLabel[2]},
-              { data: dataToPlot[3], label:dataToPlotLabel[3]},
+              { data: dataToPlot[0], label:dataToPlotLabel[0], points: { symbol: "circle" }},
+              { data: dataToPlot[1], label:dataToPlotLabel[1], points: { symbol: "diamond" }},
+              { data: dataToPlot[2], label:dataToPlotLabel[2], points: { symbol: "triangle" }},
+              { data: dataToPlot[3], label:dataToPlotLabel[3], points: { symbol: "square" }},
           ];
           plot = $.plot("#flot1", incomingData , {
             series: {
               lines: {
                 lineWidth: 2,
                 shadowSize: 0,
+                show:true,
               },
+              points: {
+                radius: 3,
+                show: true,
+                fill: true
+            },
               shadowSize: 0, // Drawing is faster without shadows
             },
-            colors: ["#000","#333", "#666", "#999", "#ccc", "#cb4b4b", "#aaaaff", "#ff6666"],
+            //colors: ["#000","#333", "#666", "#999", "#ccc", "#cb4b4b", "#aaaaff", "#ff6666"],
+            colors: ["#fff","#ddd", "#bbb", "#aaa", "#ccc", "#cb4b4b", "#aaaaff", "#ff6666"],
             xaxes: [{  
                       mode: "time",
                       timeformat: "%H:%M:%S",
@@ -235,6 +259,7 @@
                 { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
                 { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
                 { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                
                 { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
                 { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
                 { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
@@ -246,6 +271,7 @@
                 { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
                 { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
                 { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                
               ]
             }
           });
@@ -262,7 +288,7 @@
             {//34,51,41
           return true;}return false;});
 
-      var tracker = new tracking.ColorTracker(['223329']);
+      var tracker = new tracking.ColorTracker([]);
 
       tracking.track('#trackingvideo', tracker, { camera: true });
 
