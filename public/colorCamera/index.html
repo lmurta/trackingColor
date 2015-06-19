@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Bootstrap 3, from LayoutIt!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+	<!--link rel="stylesheet/less" href="less/bootstrap.less" type="text/css" /-->
+	<!--link rel="stylesheet/less" href="less/responsive.less" type="text/css" /-->
+	<!--script src="js/less-1.3.3.min.js"></script-->
+	<!--append ‘#!watch’ to the browser URL, then refresh the page. -->
+	
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/style.css" rel="stylesheet">
+
+  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+  <![endif]-->
+
+  <!-- Fav and touch icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/apple-touch-icon-144-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/apple-touch-icon-114-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/apple-touch-icon-72-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" href="img/apple-touch-icon-57-precomposed.png">
+  <link rel="shortcut icon" href="img/favicon.png">
+  
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/scripts.js"></script>
+
+	<script src="/bower_components/tracking.js/build/tracking-min.js"></script>
+	<script src="../dat-gui/build/dat.gui.min.js"></script>
+	<script src="/bower_components/tracking.js/assets/stats.min.js"></script>
+	<script src="/bower_components/tracking.js/assets/color_camera_gui.js"></script>
+	<script src="/bower_components/color-thief/src/color-thief.js"></script>
+	<script src='/bower_components/color/one-color-all.js'></script>
+	<script src='/bower_components/flot/jquery.flot.js'></script>
+	<script src='/bower_components/flot/jquery.flot.time.js'></script>
+	<script src='/bower_components/flot/jquery.flot.symbol.js'></script>
+
+ <style>
+	.colors {
+	    margin-left: 5px;
+	    margin-top: 5px;
+	    width:150px;
+	    height:450px;
+	    background-color: #fcfcdc;
+	}
+  	.trackingvideo, .trackingcanvas {
+	    width:600px;
+	    height:450px;
+    	position: absolute;
+    	margin-left: 10px;
+    	margin-top: 10px;
+  	}
+  	.flot-container {
+	    box-sizing: border-box;
+	    position: absolute;
+	    margin-left: 10px;
+	    margin-top: 500px;
+	    width: 600px;
+	    height: 450px;
+
+	    padding: 20px 15px 15px 15px;
+	    xxmargin: 15px auto 30px auto;
+	    border: 1px solid #ddd;
+	    background: #fff;
+	    background: linear-gradient(#f6f6f6 0, #fff 50px);
+	    background: -o-linear-gradient(#f6f6f6 0, #fff 50px);
+	    background: -ms-linear-gradient(#f6f6f6 0, #fff 50px);
+	    background: -moz-linear-gradient(#f6f6f6 0, #fff 50px);
+	    background: -webkit-linear-gradient(#f6f6f6 0, #fff 50px);
+	    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+	    -o-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+	    -ms-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+	    -moz-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+	    -webkit-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+	.flot-placeholder {
+		width: 100%;
+		height: 100%;
+		font-size: 14px;
+		line-height: 1.2em;
+}
+  	.nImage {
+	    margin-left: 10px;
+	    margin-top: 1000px;
+  }
+</style>
+
+  <script>
+    $( document ).ready(function() {
+      var smoothTiny = 1-(1/10);
+      var video = document.getElementById('trackingvideo');
+      var trkcanvas = document.getElementById('trackingcanvas');
+      var context = trkcanvas.getContext('2d');
+
+      var numAreas =1;
+
+      var unitSize = 16; // width (and height) of one square
+      var unitsTall = 10; // number of squares along y-axis
+      var unitsWide = 150/numAreas; // number of squares along x-axis
+
+      var ax=120; ay=200; aw=40;ah=40;dx=125;dy=0;
+      var areas = new Array(numAreas);
+      for (var i=0; i<numAreas; i++){
+        areas[i] = new Array(4);
+        areas[i]=[ax,ay,aw,ah];
+        //console.log(areas[i]);
+        ax = ax + dx;
+
+      }
+
+      var now;
+      var totalPoints = 100;
+      var dataToPlot=new Array(1);
+      var dataToPlotLabel =new Array(1);
+      for (var j=0;j<8;j++){
+        dataToPlot[j] = new Array();
+        dataToPlotLabel[j]="";
+      }
+      var incomingData;
+      incomingData=[
+              { data: dataToPlot[0], label:dataToPlotLabel[0]},
+            ];
+      
+      //plot.draw();
+      function drawAreas(){
+          context.strokeStyle = "#000000";
+          for (var i=0;i<numAreas;i++){
+            context.strokeRect(areas[i][0], areas[i][1], areas[i][2], areas[i][3]);
+            context.font = '11px Helvetica';
+            context.fillStyle = "#fff";
+            context.fillText('i: ' + i , areas[i][0], areas[i][1]);
+          }
+      }
+      
+      var divImage = document.getElementById('divImage');
+      var colorThief = new ColorThief();
+      var newImage = new Image();
+
+      $( "#start").click( function(){
+        console.log("Start");
+        context.drawImage( video, 0, 0, trkcanvas.width, trkcanvas.height);
+        newImage.src = trkcanvas.toDataURL("image/png");  
+        var dataURL = trkcanvas.toDataURL();
+        divImage.setAttribute('src',dataURL);
+      });
+      var refreshColors = setInterval( function()  {
+
+        context.drawImage( video, 0, 0, trkcanvas.width, trkcanvas.height);
+        newImage.src = trkcanvas.toDataURL("image/png");  
+        var dataURL = trkcanvas.toDataURL();
+        divImage.setAttribute('src',dataURL);
+
+      }, 5000);
+
+      divImage.onload = function() {
+          var colorThief = new ColorThief();
+          //var dominantColor = colorThief.getColor(divImage);
+          //console.log("full:"+dominantColor);
+          now = ((new Date()).getTime());
+
+          for (var i=0;i<numAreas;i++){
+            var area = {
+              'startx': areas[i][0],
+              'starty': areas[i][1],
+              'width':  areas[i][2],
+              'height': areas[i][3]
+            };
+            //console.log("passing: "+area.startx);
+
+            var dominantColor = colorThief.getColor(divImage,8,area);
+            //console.log("area :"+i+" "+dominantColor);
+            var myColor = one.color('rgb('+dominantColor[0]+','+dominantColor[1]+','+dominantColor[2]+')');
+            $('<span class="square"></span>').css({
+                display: 'block',
+                float: 'left',
+                width: unitsWide/2,
+                height: unitsTall,
+                'background-color': myColor.css()
+            }).appendTo(colors);
+
+            var myColor2 = one.color('hsv('+360 * myColor.hue()+','+75+','+100+')')
+            $('<span class="square"></span>').css({
+                display: 'block',
+                float: 'left',
+                width: unitsWide/2,
+                height: unitsTall,
+                'background-color': myColor2.css()
+            }).appendTo(colors);
+            //console.log(myColor.css());
+
+            //http://stackoverflow.com/questions/3760506/smoothing-values-over-time-moving-average-or-something-better
+            //a(i+1) = tiny*data(i+1) + (1.0-tiny)*a(i)
+            var newData = myColor.hue();
+            var length = dataToPlot[i].length;
+            //console.log("length:"+length);
+            if (length <= 0){
+              dataToPlot[i].push([now, myColor.hue() ]);
+            }else{
+              //console.log("d:"+ dataToPlot[i][length -1]);
+              var lastA = dataToPlot[i][length -1];
+              //console.log("lastA:"+ lastA[1]);
+              var nextA = smoothTiny * newData + (1.0 - smoothTiny) * lastA[1];
+              //console.log ("lastA:"+ lastA +" newData:"+ newData +" nextA:"+nextA);
+              dataToPlot[i].push([now, nextA ]);
+              //dataToPlot[i].push([now, myColor.hue() ]);
+
+            }
+            dataToPlotLabel[i] = "A:"+ i;
+          }
+          var gradiente=0;
+          var gradienteNum = 20;
+          var gradienteStep =gradienteNum / gradienteNum;
+          var gAngle = 360/gradienteNum;
+          var gSat = 75;
+          var gLigth =50;
+
+          incomingData=[
+              { data: dataToPlot[0], label:dataToPlotLabel[0], points: { symbol: "circle" }},
+              { data: dataToPlot[1], label:dataToPlotLabel[1], points: { symbol: "diamond" }},
+              { data: dataToPlot[2], label:dataToPlotLabel[2], points: { symbol: "triangle" }},
+              { data: dataToPlot[3], label:dataToPlotLabel[3], points: { symbol: "square" }},
+          ];
+          plot = $.plot("#flot1", incomingData , {
+            series: {
+              lines: {
+                lineWidth: 2,
+                shadowSize: 0,
+                show:true,
+              },
+              points: {
+                radius: 3,
+                show: true,
+                fill: true
+            },
+              shadowSize: 0, // Drawing is faster without shadows
+            },
+            //colors: ["#000","#333", "#666", "#999", "#ccc", "#cb4b4b", "#aaaaff", "#ff6666"],
+            colors: ["#fff","#ddd", "#bbb", "#aaa", "#ccc", "#cb4b4b", "#aaaaff", "#ff6666"],
+            xaxes: [{  
+                      mode: "time",
+                      timeformat: "%H:%M:%S",
+                      timezone: "browser",
+                      show: true,
+                      //rotateTicks: 135,
+            }],
+            yaxes: [  { position: "left" , min: 0, max: 1 }, 
+                      { position: "right", min: 0, max: 14,
+                       ticks:[3,4,5,6,7] 
+                     } 
+                  ],
+            grid: {
+              markings: [
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
+                
+              ]
+            }
+          });
+          plot.draw();
+      }
+
+
+      var delta = 30;
+      tracking.ColorTracker.registerColor('223329', function(r, g, b) { 
+        //if (one.color('#223329').equals(one.color('rgb('+r+','+g+','+b+')'), 0.1)) {
+        if ((r < (34+delta)) && (r > (34-delta)) &&
+            (g < (51+delta)) && (g > (51-delta)) &&
+            (b < (41+delta)) && (b > (41-delta)))
+            {//34,51,41
+          return true;}return false;});
+
+      var tracker = new tracking.ColorTracker([]);
+
+      tracking.track('#trackingvideo', tracker, { camera: true });
+
+      tracker.on('track', function(event) {
+        context.clearRect(0, 0, trkcanvas.width, trkcanvas.height);
+
+        event.data.forEach(function(rect) {
+          if (rect.color === 'custom') {
+            rect.color = tracker.customColor;
+          }
+
+          context.strokeStyle = rect.color;
+          context.strokeRect(rect.x, rect.y, rect.width, rect.height);
+          context.font = '11px Helvetica';
+          context.fillStyle = "#fff";
+          context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
+          context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
+        });
+        drawAreas();
+
+      });
+
+    });
+  </script>
+
+
+
+</head>
+
+<body>
+<div class="container">
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<ul class="nav nav-tabs">
+				<li class="active">
+					<a href="#">Home</a>
+				</li>
+				<li>
+					<a href="#">Profile</a>
+				</li>
+				<li class="disabled">
+					<a href="#">Messages</a>
+				</li>
+				<li class="dropdown pull-right">
+					 <a href="#" data-toggle="dropdown" class="dropdown-toggle">Dropdown<strong class="caret"></strong></a>
+					<ul class="dropdown-menu">
+						<li>
+							<a href="#">Action</a>
+						</li>
+						<li>
+							<a href="#">Another action</a>
+						</li>
+						<li>
+							<a href="#">Something else here</a>
+						</li>
+						<li class="divider">
+						</li>
+						<li>
+							<a href="#">Separated link</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="row clearfix">
+		<div class="col-md-2 column">
+ 
+ 			<div class="colors" id="colors"></div>
+
+		</div>
+		<div class="col-md-7 column">
+
+      		<video  class="trackingvideo" id="trackingvideo" width="600" height="450" preload autoplay loop muted controls></video>
+      		<canvas class="trackingcanvas" id="trackingcanvas" width="600" height="450"></canvas>
+  			<div class="flot-container">
+    			<div class="flot-placeholder" id="flot1"></div>
+  			</div>
+	  <div class="nImage">
+	    <img  id="divImage" width="600" height="450"></img>
+	  </div>
+
+		</div>
+		<div class="col-md-3 column">
+			<h2>
+				Heading
+			</h2>
+			<p>
+				Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
+			</p>
+			<p>
+				<a class="btn" href="#">View details »</a>
+			</p> <button type="button" class="btn btn-default">Default</button>
+		</div>
+	</div>
+</div>
+</body>
+</html>
