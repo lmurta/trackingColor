@@ -40,26 +40,28 @@
 	<script src='/bower_components/flot/jquery.flot.js'></script>
 	<script src='/bower_components/flot/jquery.flot.time.js'></script>
 	<script src='/bower_components/flot/jquery.flot.symbol.js'></script>
+	<script src='./colorNames.js'></script>
 
  <style>
 	.aLabel {
 		display: inline-block;
 		margin-bottom: 5px;
-		font-weight: bold;
+		font-weight:normal;
+		color :#909090;
 
 		-webkit-box-sizing: content-box;
 		-moz-box-sizing: content-box;
 		box-sizing: content-box;
 		border: none;
-		font: normal normal bold 24px "PT Sans Narrow", Helvetica, sans-serif;
+		font: normal normal bold 18px "PT Sans Narrow", Helvetica, sans-serif;
 		text-align: left;
 		-o-text-overflow: ellipsis;
 		text-overflow: ellipsis;
-		text-shadow: 1px 1px 0 rgba(0,0,0,0.25) ;
+		
 	}
 	.aCor {
-		font-weight: bold;
-		font: normal normal bold 18px "PT Sans Narrow", Helvetica, sans-serif;
+		font-weight: noranl;
+		font: normal normal bold 16px "PT Sans Narrow", Helvetica, sans-serif;
 		text-align: left;
 
 	}
@@ -123,12 +125,13 @@
 
   <script>
     $( document ).ready(function() {
-		var smoothTiny = 1-(1/10);
+		var smoothTiny = 1-(1/2);
+		var tickTime = 2;//seconds
 		var video = document.getElementById('trackingvideo');
 		var trkcanvas = document.getElementById('trackingcanvas');
 		var context = trkcanvas.getContext('2d');
 
-		var numAreas = 1;
+		var numAreas = 4;
 		var unitSize = 16; // width (and height) of one square
 		var unitsTall = 2; // number of squares along y-axis
 		var unitsWide = 150/numAreas; // number of squares along x-axis
@@ -189,7 +192,7 @@
 			newImage.src = trkcanvas.toDataURL("image/png");  
 			var dataURL = trkcanvas.toDataURL();
 			divImage.setAttribute('src',dataURL);
-		}, 5000);
+		}, tickTime * 1000);
 
 		divImage.onload = function() {
           var colorThief = new ColorThief();
@@ -216,6 +219,7 @@
                 height: unitsTall,
                 'background-color': myColor.css()
             }).appendTo(colors);
+            //looking for color name
 
             var myColor2 = one.color('hsv('+360 * myColor.hue()+','+75+','+100+')')
             $('<span class="square"></span>').css({
@@ -272,7 +276,22 @@
 
 				var strLabel = 'label'+i;
 				var strCor = 'cor'+i;
-				$('#'+strLabel).text("("+angulo.toFixed(0) + ") "+ angulo_cor);
+				var h1 = myColor.hue() *360;
+				var s1 = myColor.saturation() *100;
+				var v1 = myColor.value() *100;
+
+				var n1 ="-";
+				$.each( colorName, function(key, value){
+					//console.log(key + value);
+					if(myColor.equals(one.color(value),0.1) ){
+						n1 = key;
+					}
+				});
+
+
+				//var origColor = "("+ h1.toFixed(0) +","+s1.toFixed(0)+","+v1.toFixed(0)+")"+n1;
+				var origColor = n1;
+				$('#'+strLabel).html("</br>"+origColor+"</br>"+"("+angulo.toFixed(0) + ") "+ angulo_cor);
 
 				var str="";
 				$.each( counts[i], function(i, n){
