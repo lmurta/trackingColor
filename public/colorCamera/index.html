@@ -150,6 +150,7 @@
 		}
 
 		var now;
+		var timeStart = ((new Date()).getTime());
 		var totalPoints = 100;
 		var dataToPlot=new Array(1);
 		var dataToPlotLabel =new Array(1);
@@ -176,10 +177,8 @@
 
 		$( "#start").click( function(){
 			console.log("Start");
-			context.drawImage( video, 0, 0, trkcanvas.width, trkcanvas.height);
-			newImage.src = trkcanvas.toDataURL("image/png");  
-			var dataURL = trkcanvas.toDataURL();
-			divImage.setAttribute('src',dataURL);
+			timeStart = ((new Date()).getTime());
+
 		});
 		var refreshColors = setInterval( function()  {
 			context.drawImage( video, 0, 0, trkcanvas.width, trkcanvas.height);
@@ -262,19 +261,30 @@
 				}}}}}}}}}}}}}}}};
 
 				//counts[i][angulo_cor] = counts[i][angulo_cor] ? counts[i][angulo_cor]+1 : 1;
-				counts[i][angulo_cor] = now;
+				//counts[i][angulo_cor] = now;
+				var seconds = (now - timeStart)/1000;
+
+				counts[i][angulo_cor] = seconds;
 
 				var strLabel = 'label'+i;
 				var strCor = 'cor'+i;
-				$('#'+strLabel).text(i+":"+ nextA.toFixed(2)  +" A:"+angulo.toFixed(0));
+				$('#'+strLabel).text(angulo_cor);
 
 				var str="";
 				$.each( counts[i], function(i, n){
     				//alert( "Name: " + i + ", Value: " + n );
-    				str = str + i + "=" + n +"</br>";
+	    			var hrs = Math.floor(n /3600);
+					var mins = Math.floor(n/60);
+					var secs    = n % 60;
+					ret = "";
+					if (hrs > 0)
+					    ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+					ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+					ret += "" + secs.toFixed(0);
+    				str = str + ret + "s " + i +"</br>";
 				});
 	
-				$('#'+strCor).text("F:"+faixaCor + " "+ angulo_cor +" :"+ str);
+				$('#'+strCor).html(str);
 
 
 
@@ -451,6 +461,7 @@
 			<h2>
 				Color Sensor
 			</h2>
+			<button type="button" id="start" class="btn btn-default">Start</button>
 				<div id="divLabel">
 
 				</div>
@@ -459,7 +470,7 @@
 
 			<p>
 
-			</p> <button type="button" class="btn btn-default">Default</button>
+			</p> 
 		</div>
 	</div>
 </div>
