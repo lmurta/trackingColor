@@ -128,7 +128,7 @@
 		var trkcanvas = document.getElementById('trackingcanvas');
 		var context = trkcanvas.getContext('2d');
 
-		var numAreas = 4;
+		var numAreas = 1;
 		var unitSize = 16; // width (and height) of one square
 		var unitsTall = 2; // number of squares along y-axis
 		var unitsWide = 150/numAreas; // number of squares along x-axis
@@ -178,6 +178,10 @@
 		$( "#start").click( function(){
 			console.log("Start");
 			timeStart = ((new Date()).getTime());
+			counts= new Array(numAreas);
+			for (var i=0; i<numAreas; i++){
+				counts[i] = {};
+			}
 
 		});
 		var refreshColors = setInterval( function()  {
@@ -268,7 +272,7 @@
 
 				var strLabel = 'label'+i;
 				var strCor = 'cor'+i;
-				$('#'+strLabel).text(angulo_cor);
+				$('#'+strLabel).text("("+angulo.toFixed(0) + ") "+ angulo_cor);
 
 				var str="";
 				$.each( counts[i], function(i, n){
@@ -286,8 +290,6 @@
 	
 				$('#'+strCor).html(str);
 
-
-
             }
             dataToPlotLabel[i] = "A:"+ i;
           }
@@ -297,7 +299,29 @@
           var gAngle = 360/gradienteNum;
           var gSat = 75;
           var gLigth =50;
+          var faixaNames = [
+          	[0,10],
+          	[10,20],
+          	[20,30],
+          	[30,40],
+          	[40,50],
+          	[50,60],
+          	[60,70],
+          	[70,80],
+          	[80,149],
+          	[149,169],
+          	[169,200],
+          	[200,220],
+          	[220,240],
+          	[240,280],
+          	[280,320],
+          	[320,330],
+          	[330,345],
+          	[345,355],
+          	[355,360],
+          ];
 
+          
           incomingData=[
               { data: dataToPlot[0], label:dataToPlotLabel[0], points: { symbol: "circle" }},
               { data: dataToPlot[1], label:dataToPlotLabel[1], points: { symbol: "diamond" }},
@@ -334,6 +358,26 @@
                   ],
             grid: {
               markings: [
+                { color: one.color('hsl(' + faixaNames[gradiente][0] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
+                { color: one.color('hsl(' + faixaNames[gradiente][0] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
+                { color: one.color('hsl(' + faixaNames[gradiente][0] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
+                { color: one.color('hsl(' + faixaNames[gradiente][0] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
+                { color: one.color('hsl(' + faixaNames[gradiente][0] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
+                { color: one.color('hsl(' + faixaNames[gradiente][0] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
+                { color: one.color('hsl(' + faixaNames[gradiente][0] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
+                { color: one.color('hsl(' + faixaNames[gradiente][0] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
+                { color: one.color('hsl(' + faixaNames[gradiente][0] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
+                { color: one.color('hsl(' + faixaNames[gradiente][0] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
+                { color: one.color('hsl(' + faixaNames[gradiente][0] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
+                { color: one.color('hsl(' + faixaNames[gradiente][0] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
+                { color: one.color('hsl(' + faixaNames[gradiente][0] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
+                { color: one.color('hsl(' + faixaNames[gradiente][0] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
+                { color: one.color('hsl(' + faixaNames[gradiente][0] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
+                { color: one.color('hsl(' + faixaNames[gradiente][0] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
+                { color: one.color('hsl(' + faixaNames[gradiente][0] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
+                { color: one.color('hsl(' + faixaNames[gradiente][0] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
+                { color: one.color('hsl(' + faixaNames[gradiente][0] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
+              /*
                 { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
                 { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
                 { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
@@ -357,6 +401,7 @@
                 { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
                 { color: one.color('hsl(' + gradiente*gAngle + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: (gradiente++)/gradienteNum, to: (gradiente)/gradienteNum}  },
                 
+                */
               ]
             }
           });
