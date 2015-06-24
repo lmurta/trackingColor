@@ -77,7 +77,7 @@
 	    margin-left: 5px;
 	    margin-top: 5px;
 	    width:150px;
-	    height:450px;
+	    height:1250px;
 	    background-color: #fcfcdc;
 	}
   	.trackingvideo, .trackingcanvas {
@@ -189,7 +189,7 @@
 				dataToPlot[j] = new Array();
 				dataToPlotLabel[j]="";
 			}
-
+			$("#divColors").text("");
 		});
 		var refreshColors = setInterval( function()  {
 			context.drawImage( video, 0, 0, trkcanvas.width, trkcanvas.height);
@@ -222,7 +222,7 @@
                 width: unitsWide/2 -2,
                 height: unitsTall,
                 'background-color': myColor.css()
-            }).appendTo(colors);
+            }).appendTo(divColors);
             //looking for color name
 
             var myColor2 = one.color('hsv('+360 * myColor.hue()+','+75+','+100+')')
@@ -232,14 +232,14 @@
                 width: unitsWide/2 -2,
                 height: unitsTall,
                 'background-color': myColor2.css()
-            }).appendTo(colors);
+            }).appendTo(divColors);
                         $('<span class="square"></span>').css({
                 display: 'block',
                 float: 'left',
                 width: 4,
                 height: unitsTall,
                 'background-color': '#ffffff'
-            }).appendTo(colors);
+            }).appendTo(divColors);
             //console.log(myColor.css());
 
             //http://stackoverflow.com/questions/3760506/smoothing-values-over-time-moving-average-or-something-better
@@ -520,7 +520,7 @@
 	<div class="row clearfix">
 		<div class="col-md-2 column">
  
- 			<div class="colors" id="colors"></div>
+ 			<div class="colors" id="divColors"></div>
 
 		</div>
 		<div class="col-md-7 column">
