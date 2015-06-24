@@ -219,7 +219,7 @@
             $('<span class="square"></span>').css({
                 display: 'block',
                 float: 'left',
-                width: unitsWide/2,
+                width: unitsWide/2 -2,
                 height: unitsTall,
                 'background-color': myColor.css()
             }).appendTo(colors);
@@ -229,9 +229,16 @@
             $('<span class="square"></span>').css({
                 display: 'block',
                 float: 'left',
-                width: unitsWide/2,
+                width: unitsWide/2 -2,
                 height: unitsTall,
                 'background-color': myColor2.css()
+            }).appendTo(colors);
+                        $('<span class="square"></span>').css({
+                display: 'block',
+                float: 'left',
+                width: 4,
+                height: unitsTall,
+                'background-color': '#ffffff'
             }).appendTo(colors);
             //console.log(myColor.css());
 
