@@ -127,6 +127,9 @@
     $( document ).ready(function() {
 		var smoothTiny = 1-(1/2);
 		var tickTime = 2;//seconds
+		var totalPoints = 10;
+		var countPoints =0;
+
 		var video = document.getElementById('trackingvideo');
 		var trkcanvas = document.getElementById('trackingcanvas');
 		var context = trkcanvas.getContext('2d');
@@ -154,7 +157,6 @@
 
 		var now;
 		var timeStart = ((new Date()).getTime());
-		var totalPoints = 100;
 		var dataToPlot=new Array(1);
 		var dataToPlotLabel =new Array(1);
 		for (var j=0; j<numAreas; j++){
@@ -326,6 +328,11 @@
 				dataToPlot[i] = dataToPlot[i].splice(1,totalPoints);
           	}
           }
+			countPoints++;
+            if(countPoints>totalPoints){
+           		$("#divColors").empty();
+				countPoints =0;
+			}
           var gradiente=0;
           var gradienteNum = 20;
           var gradienteStep =gradienteNum / gradienteNum;
