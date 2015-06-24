@@ -185,6 +185,10 @@
 			for (var i=0; i<numAreas; i++){
 				counts[i] = {};
 			}
+			for (var j=0; j<numAreas; j++){
+				dataToPlot[j] = new Array();
+				dataToPlotLabel[j]="";
+			}
 
 		});
 		var refreshColors = setInterval( function()  {
@@ -311,6 +315,9 @@
 
             }
             dataToPlotLabel[i] = "A:"+ i;
+            if(dataToPlot[i].length>totalPoints){//dataToPlot[i].push([now, nextA ]);
+				dataToPlot[i] = dataToPlot[i].splice(1,totalPoints);
+          	}
           }
           var gradiente=0;
           var gradienteNum = 20;
