@@ -273,7 +273,7 @@
             var length = dataToPlot[i].length;
             //console.log("length:"+length);
             if (length <= 0){
-              dataToPlot[i].push([now, myColor.hue() ]);
+              dataToPlot[i].push([(now-timeStart)/1000, myColor.hue() ]);
               lastA = myColor.hue();
             }else{
 				//console.log("d:"+ dataToPlot[i][length -1]);
@@ -283,7 +283,7 @@
 				var nextA = (smoothTiny * newData) + ((1.0 - smoothTiny) * lastA[1]);
 				//console.log ("lastA:"+ lastA[1] +" newData:"+ newData +" nextA:"+nextA);
 				//lastA = nextA;
-				dataToPlot[i].push([now, nextA ]);
+				dataToPlot[i].push([(now-timeStart)/1000, nextA ]);
 				//dataToPlot[i].push([now, myColor.hue() ]);
 				var angulo = nextA * 360;
 				var angulo_cor = "";
@@ -403,7 +403,8 @@
     			xaxis: {tickLength:0},
               points: {
                 radius: 3,
-                show: true,
+                //show: true,
+                show: false,
                 fill: true
             },
               shadowSize: 0, // Drawing is faster without shadows
@@ -411,9 +412,9 @@
             //colors: ["#000","#333", "#666", "#999", "#ccc", "#cb4b4b", "#aaaaff", "#ff6666"],
             colors: ["#fff","#999", "#555", "#000"],
             xaxes: [{  
-                      mode: "time",
-                      timeformat: "%H:%M",
-                      timezone: "browser",
+                      //mode: "time",
+                      //timeformat: "%H:%M:%S",
+                      //timezone: "browser",
                       show: true,
                       //rotateTicks: 135,
             }],
