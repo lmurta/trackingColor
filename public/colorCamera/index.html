@@ -134,9 +134,9 @@
 
   <script>
     $( document ).ready(function() {
-		var smoothTiny = 0.1;
+		var smoothTiny = 0.08;
 		//var totalPoints = 1000; var tickTime = 2;//seconds
-		var totalPoints = 10000; var tickTime = 6;//seconds
+		var totalPoints = 2000; var tickTime = 6;//seconds
 
 
 		var lastA;
@@ -151,13 +151,13 @@
 		var fx;
 
 
-		var numAreas = 3;
+		var numAreas = 5;
 		var unitSize = 16; // width (and height) of one square
 		//var unitsTall = 2; // number of squares along y-axis
 		var unitsTall = divColorsHeigth/totalColors; // number of squares along y-axis
 		var unitsWide = 150/numAreas; // number of squares along x-axis
 
-		var ax=110; ay=110; aw=30;ah=30;dx=135;dy=0;
+		var ax=50; ay=125; aw=20;ah=20;dx=110;dy=0;
 		var areas = new Array(numAreas);
 		var counts= new Array(numAreas);
 
@@ -392,6 +392,7 @@
               { data: dataToPlot[1], label:dataToPlotLabel[1], points: { symbol: "diamond" }},
               { data: dataToPlot[2], label:dataToPlotLabel[2], points: { symbol: "triangle" }},
               { data: dataToPlot[3], label:dataToPlotLabel[3], points: { symbol: "square" }},
+              { data: dataToPlot[4], label:dataToPlotLabel[3], points: { symbol: "square" }},
               { data: [0], yaxis:2,},
           ];
           plot = $.plot("#flot1", incomingData , {
@@ -412,7 +413,7 @@
               shadowSize: 0, // Drawing is faster without shadows
             },
             //colors: ["#000","#333", "#666", "#999", "#ccc", "#cb4b4b", "#aaaaff", "#ff6666"],
-            colors: ["#fff","#999", "#555", "#000"],
+            colors: ["#fff","#999", "#555", "#000","#fff"],
             xaxes: [{  
                       //mode: "time",
                       //timeformat: "%H:%M:%S",
@@ -424,7 +425,7 @@
   						ticks: [
   								[0.0, "0"], //red
   								[0.05, "3"], //red
-  								[0.16, "6"], //orange/yellow
+  								[0.165, "6"], //orange/yellow
   								[0.3, "7"], //green
   								[0.47, "8"], //blue
   								[0.66, "11"], //Violet/Purple
