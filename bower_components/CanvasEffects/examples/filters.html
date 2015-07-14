@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>CanvasEffect.js image filters</title>
+		<link href="bootstrap.min.css" type="text/css" rel="stylesheet" />
+		<script src="../CanvasEffects.min.js"></script>
+		<script src="./dat.gui.min.js"></script>
+		<script>
+		var fx, gui;
+		
+		function $(selector){
+			return document.querySelector(selector);
+		};
+		
+		window.onload = function(){
+			fx = new CanvasEffects($('#pict'),{
+				workerPath:'../CanvasEffects.worker.min.js'
+			});
+			var opts = {
+				equalize: fx.equalize.bind(fx),
+				HDR: fx.hdr.bind(fx),
+				TV: fx.tv.bind(fx)
+			}
+			gui = new dat.GUI();
+			gui.add(opts,'equalize');
+			gui.add(opts,'HDR');
+			gui.add(opts,'TV');
+			
+			fx.load('./pict.jpg');
+			
+			$('#save').addEventListener('click',function(){
+				window.open(fx.toDataURL());
+			},false);
+		};
+		</script>
+	</head>
+	
+	<body>
+		<div class="page-header">
+			<h1>CanvasEffects.js image filters example</h1>
+		</div>
+		<canvas id="pict" width="670" height="503"></canvas>
+		<div>
+			<a href="#" id="save" class="btn btn-large">Save</a>
+		</div>
+	</body>
+</html>

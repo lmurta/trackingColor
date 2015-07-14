@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>CanvasEffect.js image adjustments</title>
+		<link href="bootstrap.min.css" type="text/css" rel="stylesheet" />
+		<script src="../CanvasEffects.js"></script>
+		<script src="./dat.gui.min.js"></script>
+		<script>
+		var fx, gui;
+		
+		function $(selector){
+			return document.querySelector(selector);
+		};
+		
+		window.onload = function(){
+			fx = new CanvasEffects($('#pict'),{
+				workerPath:'../CanvasEffects.worker.min.js'
+			});
+			var opts = {
+				brightness: 0,
+				contrast: 0,
+				gamma: 1,
+				saturation: 0,
+				hue: 0,
+				vibrance: 0,
+				whiteBalance: 6600
+			}
+			gui = new dat.GUI();
+			gui.add(opts,'brightness',-1,1);
+			gui.add(opts,'contrast',-100,100);
+			gui.add(opts,'gamma',0,2);
+			gui.add(opts,'saturation',-1,1);
+			gui.add(opts,'hue',0,360);
+			gui.add(opts,'vibrance',-100,100);
+			gui.add(opts,'whiteBalance',0,40000);
+			
+			for(var i in gui.__controllers){
+				gui.__controllers[i].onChange((function(i){
+						return function(value){
+							fx.restore();
+							fx[i](value);
+						}
+				})(gui.__controllers[i].property));
+				
+				gui.__controllers[i].onFinishChange((function(i){
+						return function(value){
+							fx.restore();
+							fx[i](value);
+							fx.save();
+						}
+				})(gui.__controllers[i].property));
+			}
+			
+			fx.load('./pict.jpg');
+			
+			$('#save').addEventListener('click',function(){
+				window.open(fx.toDataURL());
+			},false);
+		};
+		</script>
+	</head>
+	
+	<body>
+		<div class="page-header">
+			<h1>CanvasEffects.js available image adjustments</h1>
+		</div>
+		<canvas id="pict" width="670" height="503"></canvas>
+		<div>
+			<a href="#" id="save" class="btn btn-large">Save</a>
+		</div>
+	</body>
+</html>

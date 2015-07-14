@@ -1,0 +1,4 @@
+sudo npm install -g bower
+#bower install color-thief
+github cdkey22/color-thief
+bower install flot

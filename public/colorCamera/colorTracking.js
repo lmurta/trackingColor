@@ -1,7 +1,7 @@
     $( document ).ready(function() {
     var smoothTiny = 0.08;
     //var totalPoints = 1000; var tickTime = 2;//seconds
-    var totalPoints = 2000; var tickTime = 6;//seconds
+    var totalPoints = 2000; var tickTime = 2;//seconds
 
 
     var lastA;
@@ -89,8 +89,8 @@
 
     divImage.onload = function() {
           var colorThief = new ColorThief();
-          //var dominantColor = colorThief.getColor(divImage);
-          //console.log("full:"+dominantColor);
+          var dominantColor = colorThief.getColor(divImage);
+          console.log("full:"+dominantColor);
           now = ((new Date()).getTime());
 
           for (var i=0;i<numAreas;i++){
@@ -100,10 +100,10 @@
               'width':  areas[i][2],
               'height': areas[i][3]
             };
-            //console.log("passing: "+area.startx);
+            console.log("passing: "+area.startx);
 
             var dominantColor = colorThief.getColor(divImage,8,area);
-            //console.log("area :"+i+" "+dominantColor);
+            console.log("area :"+i+" "+dominantColor);
             var myColor = one.color('rgb('+dominantColor[0]+','+dominantColor[1]+','+dominantColor[2]+')');
             $('<span class="square"></span>').css({
                 display: 'block',
@@ -254,7 +254,7 @@
               { data: dataToPlot[1], label:dataToPlotLabel[1], points: { symbol: "diamond" }},
               { data: dataToPlot[2], label:dataToPlotLabel[2], points: { symbol: "triangle" }},
               { data: dataToPlot[3], label:dataToPlotLabel[3], points: { symbol: "square" }},
-              { data: dataToPlot[4], label:dataToPlotLabel[3], points: { symbol: "square" }},
+              { data: dataToPlot[4], label:dataToPlotLabel[4], points: { symbol: "square" }},
               { data: [0], yaxis:2,},
           ];
           plot = $.plot("#flot1", incomingData , {
@@ -275,7 +275,7 @@
               shadowSize: 0, // Drawing is faster without shadows
             },
             //colors: ["#000","#333", "#666", "#999", "#ccc", "#cb4b4b", "#aaaaff", "#ff6666"],
-            colors: ["#fff","#999", "#555", "#000","#fff"],
+            colors: ["#fff","#ccc", "#888", "#444","#000"],
             xaxes: [{  
                       //mode: "time",
                       //timeformat: "%H:%M:%S",

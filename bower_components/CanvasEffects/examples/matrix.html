@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>CanvasEffect.js image adjustments</title>
+		<link href="bootstrap.min.css" type="text/css" rel="stylesheet" />
+		<script src="../CanvasEffects.min.js"></script>
+		<script src="./dat.gui.min.js"></script>
+		<script>
+		var fx, gui;
+		
+		function $(selector){
+			return document.querySelector(selector);
+		};
+		
+		window.onload = function(){
+			fx = new CanvasEffects($('#pict'),{
+				workerPath:'../CanvasEffects.worker.min.js'
+			});
+			
+			var opts = {
+				m11:0,
+				m12:0,
+				m13:0,
+				m21:0,
+				m22:1,
+				m23:0,
+				m31:0,
+				m32:0,
+				m33:0,
+				opaque:false,
+				offset:0
+			};
+			
+			var process = function(){
+				fx.convolute([
+					opts.m11,opts.m12,opts.m13,
+					opts.m21,opts.m22,opts.m23,
+					opts.m31,opts.m32,opts.m33,
+				],opts.offset,opts.opaque);
+			};
+			
+			gui = new dat.GUI();
+			gui.add(opts,'m11');
+			gui.add(opts,'m12');
+			gui.add(opts,'m13');
+			gui.add(opts,'m21');
+			gui.add(opts,'m22');
+			gui.add(opts,'m23');
+			gui.add(opts,'m31');
+			gui.add(opts,'m32');
+			gui.add(opts,'m33');
+			gui.add(opts,'opaque');
+			gui.add(opts,'offset',0,255);
+			
+			for(var i in gui.__controllers){
+				gui.__controllers[i].onChange(function(value){
+					fx.restore();
+					process();
+				});
+			}
+			
+			fx.load('./pict.jpg');
+			
+			$('#save').addEventListener('click',function(){
+				window.open(fx.toDataURL());
+			},false);
+		};
+		</script>
+	</head>
+	
+	<body>
+		<canvas id="pict" width="670" height="503"></canvas>
+		<div>
+			<a href="#" id="save" class="btn btn-large">Save</a>
+		</div>
+	</body>
+</html>
