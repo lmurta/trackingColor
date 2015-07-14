@@ -86,11 +86,39 @@
       var dataURL = trkcanvas.toDataURL();
       divImage.setAttribute('src',dataURL);
     }, tickTime * 1000);
+    function showTooltip(x, y, contents) {
+        $('<div id="tooltip">' + contents + '</div>').css({
+            position: 'absolute',
+            display: 'none',
+            top: y - 15,
+            left: x + 5,
+            border: '1px solid #fdd',
+            padding: '2px',
+            'background-color': '#fee'
+        }).appendTo("body").fadeIn(200);
+    }
+    var previousPoint = null;
+    $("#flot1").bind("plothover", function (event, pos, item) {
+        if (item) {
+            if (previousPoint != item.dataIndex) {
+                previousPoint = item.dataIndex;
 
+                $("#tooltip").remove();
+                var x = item.datapoint[0].toFixed(4),
+                    y = item.datapoint[1] *360;
+                    y = y.toFixed(0);
+                showTooltip(item.pageX, item.pageY, item.series.label + " " +  y );
+            }
+        }
+        else {
+            $("#tooltip").remove();
+            previousPoint = null;
+        }
+    });
     divImage.onload = function() {
           var colorThief = new ColorThief();
-          var dominantColor = colorThief.getColor(divImage);
-          console.log("full:"+dominantColor);
+          //var dominantColor = colorThief.getColor(divImage);
+          //console.log("full:"+dominantColor);
           now = ((new Date()).getTime());
 
           for (var i=0;i<numAreas;i++){
@@ -100,10 +128,10 @@
               'width':  areas[i][2],
               'height': areas[i][3]
             };
-            console.log("passing: "+area.startx);
+            //console.log("passing: "+area.startx);
 
             var dominantColor = colorThief.getColor(divImage,8,area);
-            console.log("area :"+i+" "+dominantColor);
+            //console.log("area :"+i+" "+dominantColor);
             var myColor = one.color('rgb('+dominantColor[0]+','+dominantColor[1]+','+dominantColor[2]+')');
             $('<span class="square"></span>').css({
                 display: 'block',
@@ -317,6 +345,7 @@
                      } 
                   ],
             grid: {
+              hoverable: true,
               markings: [
                 { color: one.color('hsl(' + faixaNames[gradiente][1] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
                 { color: one.color('hsl(' + faixaNames[gradiente][1] + ',' + gSat + ',' + gLigth + ')').css(), lineWidth: 1, yaxis: { from: faixaNames[gradiente][0]/360, to: faixaNames[gradiente++][1]/360}  },
