@@ -60,7 +60,7 @@ $(document).ready(function() {
 
 
 
-    var numAreas = 1;
+    var numAreas = 5;
     var unitSize = 16; // width (and height) of one square
     //var unitsTall = 2; // number of squares along y-axis
     var unitsTall = divColorsHeigth / totalColors; // number of squares along y-axis
