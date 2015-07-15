@@ -1,57 +1,46 @@
-
 var gradienteNum = 20;
 var gradienteStep = gradienteNum / gradienteNum;
 var gAngle = 360 / gradienteNum;
 var gSat = 75;
 var gLigth = 50;
 var faixaCores = [
-    [0, 10,"Red"],
-    [10, 20,"Red-Orange"], 
-    [20, 40,"Orange-Brown"], 
-    [40, 50,"Orange-Yellow"], 
-    [50, 60,"Yellow"], 
-    [60, 80,"Yellow-Green"], 
-    [80, 140,"Green"], 
-    [140, 169,"Green-Cyan"],
-    [169, 200,"Cyan"],
-    [200, 220,"Cyan-Blue"],
-    [220, 240,"Blue"],
-    [240, 280,"Blue-Magenta"],
-    [280, 320,"Magenta"],
-    [320, 330,"Magenta-Pink"],
-    [330, 345,"Pink"],
-    [345, 355,"Pink-Red"],
-    [355, 360,"Red"],
+    [0, 10, "Red"],
+    [10, 20, "Red-Orange"],
+    [20, 40, "Orange-Brown"],
+    [40, 50, "Orange-Yellow"],
+    [50, 60, "Yellow"],
+    [60, 80, "Yellow-Green"],
+    [80, 140, "Green"],
+    [140, 169, "Green-Cyan"],
+    [169, 200, "Cyan"],
+    [200, 220, "Cyan-Blue"],
+    [220, 240, "Blue"],
+    [240, 280, "Blue-Magenta"],
+    [280, 320, "Magenta"],
+    [320, 330, "Magenta-Pink"],
+    [330, 345, "Pink"],
+    [345, 355, "Pink-Red"],
+    [355, 360, "Red"],
 ];
 var ticksArray = new Array();
 var gradienteArray = new Array();
 var arrayLength = faixaCores.length;
 for (var j = 0; j < arrayLength; j++) {
-		//console.log("angulo:"+angulo +"faixa:"+faixaCores[j][1])
-		ticksArray.push(faixaCores[j][0]);
+    //console.log("angulo:"+angulo +"faixa:"+faixaCores[j][1])
+    ticksArray.push(faixaCores[j][0]);
 
-		var grad = {
-                        color: one.color('hsl(' + faixaCores[j][1] + ',' + gSat + ',' + gLigth + ')').css(),
-                        lineWidth: 1,
-                        yaxis: {
-                            from: faixaCores[j][0] / 360,
-                            to: faixaCores[j][1] / 360
-                        }
-                    };
+    var grad = {
+        color: one.color('hsl(' + faixaCores[j][1] + ',' + gSat + ',' + gLigth + ')').css(),
+        lineWidth: 1,
+        yaxis: {
+            from: faixaCores[j][0] / 360,
+            to: faixaCores[j][1] / 360
+        }
+    };
 
 
-		gradienteArray.push(grad);
-/*		{
-                        color: one.color('hsl(' + faixaCores[j][1] + ',' + gSat + ',' + gLigth + ')').css(),
-                        lineWidth: 1,
-                        yaxis: {
-                            from: faixaCores[j][0] / 360,
-                            to: faixaCores[j][1] / 360
-                        }
-                    }
+    gradienteArray.push(grad);
 
-		}
-	*/
 };
 $(document).ready(function() {
     var smoothTiny = 0.8;
@@ -61,8 +50,8 @@ $(document).ready(function() {
 
 
     var lastA;
-    var totalColors = 1000;
-    var divColorsHeigth = 1250;
+    var totalColors = 800;
+    var divColorsHeigth = 800;
     var countPoints = 0;
 
     var video = document.getElementById('trackingvideo');
@@ -129,7 +118,7 @@ $(document).ready(function() {
 
     tracker.on('track', function(event) {
         context.clearRect(0, 0, trkcanvas.width, trkcanvas.height);
-	      drawAreas();
+        drawAreas();
 
     });
     var divImage = document.getElementById('divImage');
@@ -253,16 +242,18 @@ $(document).ready(function() {
 
                 var faixaCor = 0;
 
-								var arrayLength = faixaCores.length;
-								for (var j = 0; j < arrayLength; j++) {
-										//console.log("angulo:"+angulo +"faixa:"+faixaCores[j][1])
-										if((angulo >  faixaCores[j][0])&&
-											 (angulo <= faixaCores[j][1])) {break;}
-										faixaCor++;
-								}
-								angulo_cor=faixaCores[faixaCor][2];
+                var arrayLength = faixaCores.length;
+                for (var j = 0; j < arrayLength; j++) {
+                    //console.log("angulo:"+angulo +"faixa:"+faixaCores[j][1])
+                    if ((angulo > faixaCores[j][0]) &&
+                        (angulo <= faixaCores[j][1])) {
+                        break;
+                    }
+                    faixaCor++;
+                }
+                angulo_cor = faixaCores[faixaCor][2];
 
-								//console.log("angulo:"+angulo +"angulo_cor:"+angulo_cor)
+                //console.log("angulo:"+angulo +"angulo_cor:"+angulo_cor)
 
                 var seconds = (now - timeStart) / 1000;
 
