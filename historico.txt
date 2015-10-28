@@ -2,3 +2,8 @@ sudo npm install -g bower
 #bower install color-thief
 github https://github.com/cdkey22/color-thief/tree/add_zonning_on_images
 bower install flot
+
+
+
+npm start
+http://localhost:3000/colorCamera/
